@@ -23,6 +23,17 @@ Notes:
 	 %X hex upper
 	 %% percentage sign
 
+[logic]
+my_printf
+    print literal text
+    parser(&curr)
+        parse specification
+        advance curr past specification
+        count = formatter(...)
+        return count
+    total_count += returned count
+    loop
+
 [.gitignore]
 
 .gitignore
