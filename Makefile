@@ -14,27 +14,26 @@ BONUS_HEADER = ft_printf_bonus.h
 
 CC = cc
 AR = ar rcs
-RM = rm -rf
+RMF = rm -f
 
 CFLAGS = -Wall -Werror -Wextra
 LIBFT = -Lft
 
-all:
-	$(AR)
+all: $(NAME)
 
-$(NAME): all
+$(NAME): $(OBJ)
+	$(AR) $(NAME) $(OBJ)
 
-bonus:
-	$(AR) 
+bonus: $(NAME)
 
 %.o:%.c $(HEADER)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	RM $(OBJ)
+	$(RMF) $(OBJ)
 
-fclean:
-	RM $(NAME)
+fclean: clean
+	$(RMF) $(NAME)
 
 re: fclean all
 
