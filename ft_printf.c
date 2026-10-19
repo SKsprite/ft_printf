@@ -6,7 +6,7 @@
 /*   By: stkoh <stkoh@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/15 20:49:33 by stkoh             #+#    #+#             */
-/*   Updated: 2026/10/18 19:30:55 by stkoh            ###   ########.fr       */
+/*   Updated: 2026/10/19 22:55:17 by stkoh            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,46 +14,23 @@
 
 size_t	parse(const char *curr, t_parsed *inpt);
 {
-	size_t	advanced;
-	const t_u8	*str;
-
-	str = (const t_u8 *) curr;
-	if (*str == (t_u8) TYPE_C)
-		inpt->type = TYPE_C;
-	else if (*str == (t_u8) TYPE_S)
-		inpt->type = TYPE_S;
-	else if (*str == (t_u8) TYPE_P)
-		inpt->type = TYPE_P;
-	else if (*str == (t_u8) TYPE_D)
-		inpt->type = TYPE_D;
-	else if (*str == (t_u8) TYPE_I)
-		inpt->type = TYPE_I;
-	else if (*str == (t_u8) TYPE_U)
-		inpt->type = TYPE_U;
-	else if (*str == (t_u8) TYPE_X)
-		inpt->type = TYPE_X;
-	else if (*str == (t_u8) TYPE_U_X)
-		inpt->type = TYPE_U_X;
-	else if (*str == (t_u8) TYPE_PERC)
-		inpt->type = TYPE_PERC;
 }
 
-void	format_str(const char *str, t_parsed *inpt, va_list *args)
+static int	print_literal(const char *str, int *count)
 {
-	
-	while (*curr)
-	{
-		while(*curr && *curr != (t_u8) '%')
-		{
-			curr++;
-			count++;
-		}
-		ft_putstr_fd(1, str, count+diff);
-		parse_type(s[i], args);
-	}
+	int	i;
+	int	suc;
+
+	i = 0;
+	while (str[i] && str[i] != '%')
+		i++;
+	suc = write(1, str, i);
+	if (suc >= 0)
+		*count += suc;
+	return (suc);
 }
 
-void	reset_parsed(t_parsed *inpt)
+static void	reset_parsed(t_parsed *inpt)
 {
 	inpt->flags = 0;
 	inpt->has_width = 0;
@@ -66,29 +43,28 @@ void	reset_parsed(t_parsed *inpt)
 int	ft_printf(const char *str, ...)
 {
 	va_list		args;
-	const t_u8	*curr;
-	size_t		count;
+	size_t		i;
+	int			count;
 	t_parsed	parsed_inpt;
+	ssize_t		ret;
 
 	if (!str)
-		return (NULL);
-	count = 0;
-	curr = (const t_u8 *) str;
+		return (-1);
+	i = 0;
+	count = -1;
 	va_start(args, str);
-	while (*curr)
+	while (str && str[i])
 	{
-		reset_parsed(&parsed_inpt);
-		while (*curr && *curr != (t_u8) '%')
+		if (str[i] == '%')
 		{
-
+			reset_parsed(&parsed_inpt);
+			ret = print_format(&str[i], *args, &parsed_inpt, &count);
 		}
-		if (*curr == (t_u8) '%')
-		{
-			parse(curr, &parsed_inpt);
-			count += format_str(curr, &parsed_inpt, &args);
-			
-		}
+		else
+			ret = print_literal(&str[i], &count);
+		if (ret < 0)
+			return (va_end(args), count);
+		i += ret;
 	}
-	va_end(args);
-	return (count);
+	return (va_end(args), count);
 }
