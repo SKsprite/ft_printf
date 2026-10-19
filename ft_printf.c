@@ -6,14 +6,15 @@
 /*   By: stkoh <stkoh@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/15 20:49:33 by stkoh             #+#    #+#             */
-/*   Updated: 2026/10/19 22:55:17 by stkoh            ###   ########.fr       */
+/*   Updated: 2026/10/19 23:06:08 by stkoh            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-size_t	parse(const char *curr, t_parsed *inpt);
+void	parse(const char *curr, t_parsed *inpt)
 {
+	return ;
 }
 
 static int	print_literal(const char *str, int *count)
@@ -35,9 +36,9 @@ static void	reset_parsed(t_parsed *inpt)
 	inpt->flags = 0;
 	inpt->has_width = 0;
 	inpt->width = 0;
+	inpt->has_precision = 0;
 	inpt->precision = 0;
 	inpt->type = 0;
-	inpt->advanced = 0;
 }
 
 int	ft_printf(const char *str, ...)
