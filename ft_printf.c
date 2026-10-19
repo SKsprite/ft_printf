@@ -6,15 +6,19 @@
 /*   By: stkoh <stkoh@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/15 20:49:33 by stkoh             #+#    #+#             */
-/*   Updated: 2026/10/19 23:06:08 by stkoh            ###   ########.fr       */
+/*   Updated: 2026/10/19 23:17:25 by stkoh            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-void	parse(const char *curr, t_parsed *inpt)
+int	print_format(const char *str, va_list *args, t_parsed *inpt, int *count)
 {
-	return ;
+	(void) str;
+	(void) args;
+	(void) inpt;
+	(void) count;
+	return (1);
 }
 
 static int	print_literal(const char *str, int *count)
@@ -59,7 +63,7 @@ int	ft_printf(const char *str, ...)
 		if (str[i] == '%')
 		{
 			reset_parsed(&parsed_inpt);
-			ret = print_format(&str[i], *args, &parsed_inpt, &count);
+			ret = print_format(&str[i], &args, &parsed_inpt, &count);
 		}
 		else
 			ret = print_literal(&str[i], &count);
