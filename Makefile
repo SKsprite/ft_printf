@@ -5,10 +5,11 @@ LIBFT = $(LIBFT_DIR)/libft.a
 
 
 SRC = ft_printf.c\
-	  handler.c\
-	  handle_unsigned.c\
-	  handle_signed.c\
-	  format_spec.c
+	  rules.c\
+	  parser.c\
+	  formatter.c\
+	  format_num.c\
+	  printer.c
 
 OBJ = ${SRC:.c=.o}
 

@@ -6,56 +6,42 @@
 /*   By: stkoh <stkoh@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/10/15 20:49:33 by stkoh             #+#    #+#             */
-/*   Updated: 2026/10/20 03:56:36 by stkoh            ###   ########.fr       */
+/*   Updated: 2026/10/20 18:25:42 by stkoh            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-int	print_format(const char *str, va_list *args, t_parsed *inpt, int *i)
+int	print_convert(const char *str, va_list args, int *i)
 {
-	t_handler	func;
+	t_specs	spec;
+	t_field	field;
+	int		start;
 
 	(*i)++;
-	func = NULL;
-	while (str[*i] && !func)
+	start = *i;
+	if (!parse_spec(str, i, &spec, args))
 	{
-		func = get_handler(str[*i]);
-		if (!func)
-		{
-			parse_format_spec(str, args, inpt, i);
-			(*i)++;
-		}
+		if (!str[*i])
+			return (-1);
+		*i = start;
+		return (write(1, "%", 1));
 	}
-	if (str[*i])
-		(*i)++;
-	if (!func)
-		return (0);
-	return (func(args, inpt));
+	format_arg(&spec, args, &field);
+	return (print_field(&field));
 }
 
 static int	print_literal(const char *str, int *i)
 {
-	int	count;
-	int	j;
+	int	len;
 
-	j = 0;
-	while (str[*i + j] && str[*i + j] != '%')
-		j++;
-	count = write(1, &str[*i], j);
-	if (count >= 0)
-		*i += j;
-	return (count);
-}
-
-static t_parsed	*reset_parsed(t_parsed *inpt)
-{
-	inpt->flags = 0;
-	inpt->has_width = 0;
-	inpt->width = 0;
-	inpt->has_precision = 0;
-	inpt->precision = 0;
-	return (inpt);
+	len = 0;
+	while (str[*i + len] && str[*i + len] != '%')
+		len++;
+	if (write(1, &str[*i], len) != len)
+		return (-1);
+	*i += len;
+	return (len);
 }
 
 int	ft_printf(const char *str, ...)
@@ -63,7 +49,6 @@ int	ft_printf(const char *str, ...)
 	va_list		args;
 	int			i;
 	int			count;
-	t_parsed	parsed_inpt;
 	ssize_t		ret;
 
 	if (!str)
@@ -71,11 +56,11 @@ int	ft_printf(const char *str, ...)
 	i = 0;
 	count = 0;
 	va_start(args, str);
-	while (str && str[i])
+	while (str[i])
 	{
 		if (str[i] == '%')
 		{
-			ret = print_format(str, &args, reset_parsed(&parsed_inpt), &i);
+			ret = print_convert(str, args, &i);
 		}
 		else
 			ret = print_literal(str, &i);
