@@ -1,38 +1,46 @@
 NAME = libftprintf.a
 
-SRC = ft_printf.c
+LIBFT_DIR = libft
+LIBFT = $(LIBFT_DIR)/libft.a
+
+
+SRC = ft_printf.c\
+	  handler.c\
+	  handle_unsigned.c\
+	  handle_signed.c\
+	  format_spec.c
 
 OBJ = ${SRC:.c=.o}
 
 HEADER = ft_printf.h
 
-BONUS_FILE = *_bonus.c
-
-BONUS_OBJ = ${BONUS_FILE:.c=.o}
-
-BONUS_HEADER = ft_printf_bonus.h
-
 CC = cc
 AR = ar rcs
 RMF = rm -f
 
-CFLAGS = -Wall -Werror -Wextra
-LIBFT = -Lft
+CFLAGS = -Wall -Werror -Wextra -I$(LIBFT_DIR)
+
 
 all: $(NAME)
 
-$(NAME): $(OBJ)
+$(NAME): $(LIBFT) $(OBJ)
+	cp $(LIBFT) $(NAME)
 	$(AR) $(NAME) $(OBJ)
 
-bonus: $(NAME)
+$(LIBFT):
+	$(MAKE) -C $(LIBFT_DIR)
+
+bonus: all
 
 %.o:%.c $(HEADER)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
+	$(MAKE) -C $(LIBFT_DIR) clean
 	$(RMF) $(OBJ)
 
 fclean: clean
+	$(MAKE) -C $(LIBFT_DIR) fclean
 	$(RMF) $(NAME)
 
 re: fclean all
